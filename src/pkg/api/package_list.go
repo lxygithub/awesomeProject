@@ -1,6 +1,7 @@
 package api
 
 import (
+	"io/ioutil"
 	"net/http"
 	"os"
 )
@@ -10,18 +11,19 @@ var dirPath = "E:/keke_release/test"
 
 func PackageList(w http.ResponseWriter, r *http.Request) {
 	r.ParseForm()
-	//err := os.Chdir(dirPath)
-	//var dirPaths []string
-	//if err == nil {
-	//	wd, _ := os.Getwd()
-	//	dirs, _ := ioutil.ReadDir(wd)
-	//
-	//	for _, fileInfo := range dirs {
-	//		if fileInfo.IsDir() {
-	//			append(dirPaths, dirPath+pathSep+fileInfo.Name())
-	//		}
-	//	}
-	//	fmt.Fprintf(w, wd)
-	//}
+	err := os.Chdir(dirPath)
+	//var dirInfos = []models.DirInfo{}
+	if err == nil {
+		dirs, _ := ioutil.ReadDir(dirPath)
+		for _, fileInfo := range dirs {
+			if fileInfo.IsDir() {
+				//append(dirPaths, dirPath+pathSep+fileInfo.Name())
+			}
+		}
+	}
+
+}
+
+func getDirTree() {
 
 }

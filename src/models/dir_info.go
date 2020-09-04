@@ -1,11 +1,8 @@
 package models
 
-import "fmt"
+import "os"
 
-type Car struct {
-	Name string
-}
-
-func (car *Car) Run() {
-	fmt.Println(car.Name + " running........")
+type DirInfo struct {
+	file     os.FileInfo
+	DirInfos []DirInfo
 }
