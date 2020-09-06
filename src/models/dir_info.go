@@ -1,8 +1,7 @@
 package models
 
-import "os"
-
 type DirInfo struct {
-	file     os.FileInfo
-	DirInfos []DirInfo
+	Name   string `json:"name"`
+	Path   string `json:"path"`
+	IsFile bool   `json:"is_file"`
 }
