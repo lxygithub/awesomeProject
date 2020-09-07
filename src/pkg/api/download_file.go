@@ -4,7 +4,8 @@ import (
 	"fmt"
 	"io/ioutil"
 	"net/http"
-	"os"
+	"path/filepath"
+	"strconv"
 	"strings"
 )
 
@@ -13,12 +14,14 @@ func DownLoadFile(w http.ResponseWriter, r *http.Request) {
 	query := r.URL.Query()
 	names, ok := query["file"]
 	if ok && len(names[0]) > 0 && strings.HasPrefix(names[0], topPath) {
-		file := names[0]
-		if strings.HasPrefix(file, "E:/keke_release") {
+		file, _ := filepath.Abs(names[0])
+		preFix, _ := filepath.Abs("E:/keke_release")
+		if strings.HasPrefix(file, preFix) {
 			bytes, err := ioutil.ReadFile(file)
 			if err == nil {
-				fileName := file[strings.LastIndex(file, string(os.PathSeparator))+1:]
+				fileName := filepath.Base(file)
 				w.Header().Set("Content-Disposition", "attachment; filename="+fileName)
+				w.Header().Set("Content-Length", strconv.FormatInt(int64(len(bytes)), 10))
 				w.Write(bytes)
 			}
 		} else {

@@ -6,11 +6,12 @@ import (
 	"models"
 	"net/http"
 	"os"
+	"path/filepath"
 	"strings"
 )
 
 var pathSep = string(os.PathSeparator)
-var topPath = "E:/keke_release"
+var topPath, _ = filepath.Abs("E:/keke_release")
 var currentPath string
 
 func PackageList(w http.ResponseWriter, r *http.Request) {
@@ -29,9 +30,10 @@ func PackageList(w http.ResponseWriter, r *http.Request) {
 	if dirs != nil {
 		for i := range dirs {
 			f := dirs[i]
+			path, _ := filepath.Abs(currentPath + pathSep + f.Name())
 			fileList = append(fileList, models.DirInfo{
 				Name:     f.Name(),
-				Path:     currentPath + pathSep + f.Name(),
+				Path:     path,
 				IsFile:   !f.IsDir(),
 				ModTime:  f.ModTime().Format("2006-01-02 15:04:05"),
 				FileSize: f.Size(),
@@ -47,12 +49,7 @@ func PackageList(w http.ResponseWriter, r *http.Request) {
 		Files    []models.DirInfo
 		LastPath string
 	}
-	lastSepIndex := strings.LastIndex(currentPath, pathSep)
-	if lastSepIndex > 0 {
-		t.Execute(w, TemplateData{Files: fileList, LastPath: currentPath[:lastSepIndex]})
-	} else {
-		t.Execute(w, TemplateData{Files: fileList, LastPath: currentPath})
-	}
+	t.Execute(w, TemplateData{Files: fileList, LastPath: filepath.Dir(currentPath)})
 }
 
 func GetDirTree(currentPath string) []os.FileInfo {
