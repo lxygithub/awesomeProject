@@ -10,7 +10,7 @@ import (
 )
 
 var pathSep = string(os.PathSeparator)
-var topPath = "D:/go_space/awesomeProject/src/keke_test"
+var topPath = "E:/keke_release"
 var currentPath string
 
 func PackageList(w http.ResponseWriter, r *http.Request) {
@@ -30,19 +30,29 @@ func PackageList(w http.ResponseWriter, r *http.Request) {
 		for i := range dirs {
 			f := dirs[i]
 			fileList = append(fileList, models.DirInfo{
-				Name:   f.Name(),
-				Path:   currentPath + pathSep + f.Name(),
-				IsFile: !f.IsDir()})
+				Name:     f.Name(),
+				Path:     currentPath + pathSep + f.Name(),
+				IsFile:   !f.IsDir(),
+				ModTime:  f.ModTime().Format("2006-01-02 15:04:05"),
+				FileSize: f.Size(),
+				MB:       int(f.Size() / 1024 / 1024),
+			})
 		}
 	}
 	//b, _ := json.Marshal(fileList)
 	//fmt.Fprintf(w, string(b))
 
 	t, _ := template.ParseFiles("src/web/templates/files.html")
-	data := map[string][]models.DirInfo{
-		"files": fileList,
+	type TemplateData struct {
+		Files    []models.DirInfo
+		LastPath string
 	}
-	t.Execute(w, data)
+	lastSepIndex := strings.LastIndex(currentPath, pathSep)
+	if lastSepIndex > 0 {
+		t.Execute(w, TemplateData{Files: fileList, LastPath: currentPath[:lastSepIndex]})
+	} else {
+		t.Execute(w, TemplateData{Files: fileList, LastPath: currentPath})
+	}
 }
 
 func GetDirTree(currentPath string) []os.FileInfo {
