@@ -1,6 +1,6 @@
 package main
 
-import "pkg/api"
+import "./pkg/api"
 
 func main() {
 

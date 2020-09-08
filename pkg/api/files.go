@@ -1,9 +1,9 @@
 package api
 
 import (
+	"../../models"
 	"html/template"
 	"io/ioutil"
-	"models"
 	"net/http"
 	"os"
 	"path/filepath"
