@@ -10,6 +10,7 @@ func Route() {
 	http.HandleFunc("/files", PackageList)
 	http.HandleFunc("/files/download", DownLoadFile)
 	//http.HandleFunc("/index", Index)
+	//http.HandleFunc("/qq_send", Send)
 
 	//fs := http.FileServer(http.Dir("E:/keke_release/"))
 	//http.Handle("/E:/keke_release/", http.StripPrefix("/E:/keke_release/", fs))

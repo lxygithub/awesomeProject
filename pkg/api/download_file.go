@@ -11,10 +11,9 @@ import (
 
 func DownLoadFile(w http.ResponseWriter, r *http.Request) {
 	r.ParseForm()
-	query := r.URL.Query()
-	names, ok := query["file"]
-	if ok && len(names[0]) > 0 && strings.HasPrefix(names[0], topPath) {
-		file, _ := filepath.Abs(names[0])
+	fileName := r.PostForm.Get("file")
+	if fileName != "" && strings.HasPrefix(fileName, topPath) {
+		file, _ := filepath.Abs(fileName)
 		preFix, _ := filepath.Abs("E:/keke_release")
 		if strings.HasPrefix(file, preFix) {
 			bytes, err := ioutil.ReadFile(file)

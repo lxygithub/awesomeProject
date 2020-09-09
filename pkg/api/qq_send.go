@@ -2,8 +2,10 @@ package api
 
 import (
 	"fmt"
+	"net/http"
 	"os"
 	"os/signal"
+	"strconv"
 
 	"github.com/sirupsen/logrus"
 
@@ -11,8 +13,18 @@ import (
 	"github.com/Logiase/gomirai/message"
 )
 
-func Send() {
-	var qq uint = 2662969831
+func Send(w http.ResponseWriter, r *http.Request) {
+	r.ParseForm()
+	var qq uint
+	var temp, err = strconv.ParseUint(r.URL.Query().Get("qq"), 10, 64)
+	if err == nil {
+		qq = uint(temp)
+	} else {
+		fmt.Fprintf(w, "qq is error")
+		return
+	}
+
+	msg := r.URL.Query().Get("msg")
 
 	interrupt := make(chan os.Signal, 1)
 	signal.Notify(interrupt, os.Interrupt)
@@ -41,7 +53,7 @@ func Send() {
 		case e := <-b.Chan:
 			switch e.Type {
 			case message.EventReceiveGroupMessage:
-				_, err = b.SendGroupMessage(e.Sender.Group.Id, 0, message.PlainMessage("中文消息"))
+				_, err = b.SendGroupMessage(e.Sender.Group.Id, 0, message.PlainMessage(msg))
 				if err != nil {
 					fmt.Println(err)
 				}

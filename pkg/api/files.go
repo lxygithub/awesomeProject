@@ -1,7 +1,9 @@
 package api
 
 import (
-	"../../models"
+	"encoding/json"
+	"fmt"
+	"github.com/models"
 	"html/template"
 	"io/ioutil"
 	"net/http"
@@ -16,12 +18,11 @@ var currentPath string
 
 func PackageList(w http.ResponseWriter, r *http.Request) {
 	r.ParseForm()
-	query := r.URL.Query()
-	names, ok := query["dir"]
+	name := r.PostForm.Get("dir")
 	var dirs []os.FileInfo
-	if ok && len(names[0]) > 0 && strings.HasPrefix(names[0], topPath) {
-		dirs = GetDirTree(names[0])
-		currentPath = names[0]
+	if name != "" && strings.HasPrefix(name, topPath) {
+		dirs = GetDirTree(name)
+		currentPath = name
 	} else {
 		dirs = GetDirTree(topPath)
 		currentPath = topPath
@@ -41,15 +42,17 @@ func PackageList(w http.ResponseWriter, r *http.Request) {
 			})
 		}
 	}
-	//b, _ := json.Marshal(fileList)
-	//fmt.Fprintf(w, string(b))
-
-	t, _ := template.ParseFiles("src/web/templates/files.html")
-	type TemplateData struct {
-		Files    []models.DirInfo
-		LastPath string
+	if strings.Contains(r.Header.Get("content-type"), "json") {
+		b, _ := json.Marshal(models.BaseResponse{Code: 0, ErrMsg: "", Data: fileList})
+		fmt.Fprintf(w, string(b))
+	} else {
+		t, _ := template.ParseFiles("web/templates/files.html")
+		type TemplateData struct {
+			Files    []models.DirInfo
+			LastPath string
+		}
+		t.Execute(w, TemplateData{Files: fileList, LastPath: filepath.Dir(currentPath)})
 	}
-	t.Execute(w, TemplateData{Files: fileList, LastPath: filepath.Dir(currentPath)})
 }
 
 func GetDirTree(currentPath string) []os.FileInfo {

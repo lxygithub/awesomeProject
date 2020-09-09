@@ -7,7 +7,12 @@
 <script src="src/web/js/jquery-3.5.1.min.js"></script>
 <body>
 <a href="files" style="margin: 30px">首页</a>
-<a href="files?dir={{.LastPath}}" style="margin: 30px">../上一层</a><br>
+<a href="javascript:void(0);" onclick="document.getElementById('myform').submit();">
+    <form id="myform" method="post" action="files">
+        <input type="hidden" name="dir" value="{{.LastPath}}">
+    </form>
+    ../上一层
+</a><br>
 <table style="border-spacing: 30px 10px">
     <thead>
     <tr>
@@ -21,7 +26,12 @@
         {{if .IsFile}}
             <tr>
                 <td>
-                    <a href="files/download?file={{.Path}}">{{.Name}}</a>
+                    <a href="javascript:void(0);" onclick="document.getElementById('myform2').submit();">
+                        <form id="myform2" method="post" action="files/download">
+                            <input type="hidden" name="file" value="{{.Path}}">
+                        </form>
+                        {{.Name}}
+                    </a>
                 </td>
                 <td>{{.MB}}MB</td>
                 <td>{{.ModTime}}</td>
@@ -29,7 +39,12 @@
         {{else}}
             <tr>
                 <td>
-                    <a href="files?dir={{.Path}}">{{.Name}}</a>
+                    <a href="javascript:void(0);" onclick="document.getElementById('myform1').submit();">
+                        <form id="myform1" method="post" action="files">
+                            <input type="hidden" name="dir" value="{{.Path}}">
+                        </form>
+                        {{.Name}}
+                    </a>
                 </td>
                 <td></td>
                 <td>{{.ModTime}}</td>
