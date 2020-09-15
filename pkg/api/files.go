@@ -18,7 +18,12 @@ var currentPath string
 
 func PackageList(w http.ResponseWriter, r *http.Request) {
 	r.ParseForm()
-	name := r.PostForm.Get("dir")
+	var name string
+	if r.Method == "GET" {
+		name = r.URL.Query().Get("dir")
+	} else if r.Method == "POST" {
+		name = r.PostForm.Get("dir")
+	}
 	var dirs []os.FileInfo
 	if name != "" && strings.HasPrefix(name, topPath) {
 		dirs = GetDirTree(name)

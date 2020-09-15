@@ -11,7 +11,12 @@ import (
 
 func DownLoadFile(w http.ResponseWriter, r *http.Request) {
 	r.ParseForm()
-	fileName := r.PostForm.Get("file")
+	var fileName string
+	if r.Method == "GET" {
+		fileName = r.URL.Query().Get("file")
+	} else if r.Method == "POST" {
+		fileName = r.PostForm.Get("file")
+	}
 	if fileName != "" && strings.HasPrefix(fileName, topPath) {
 		file, _ := filepath.Abs(fileName)
 		preFix, _ := filepath.Abs("E:/keke_release")
